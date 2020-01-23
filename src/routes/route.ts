@@ -1,7 +1,6 @@
 import express from 'express';
-const app = express();
-
 import User from './user'
+const app = express();
 
 app.use(User);
 

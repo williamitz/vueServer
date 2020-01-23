@@ -1,55 +1,58 @@
 import {Router, Response, Request} from 'express';
-import Server from '../classes/server';
+import Mysql = require('../classes/mysql');
+
+const MysqlDB = Mysql.default.instance;
 
 const router = Router();
 
-router.post( '/login', (req: Request, res: Response) => {
 
-    let body = req.body;
-    let sqlMysql = `
-        SELECT * FROM users WHERE user = '${ body.user }' AND password = '${ body.password }';
-    `;
+router.post('/User/Add', (req: Request, res: Response) => {
+  let body = req.body; //JSON.stringify(req.body) ;
+  // let newBody = JSON.parse(body);
 
-  console.log(body);
-    
-    Server.onExecuteQuery( sqlMysql, (err: any, data: Object[]) => {
-        
-        if( err ) {
-            return res.status(500).json({
-                ok: false,
-                error: 'Error de conexión'
-            });
-        }
-    
-        res.json({
-            ok: true,
-            data,
-            message: 'bienvenido'
-        });
-    });
+  let sqlQuery = `CALL ss_addUer( "${body.nameUser}", "${body.passwordUser }" );`
 
+  MysqlDB.onExecuteQuery( sqlQuery, (err: any, data: Object) => {
+    if (err) {
 
-});
-
-router.get('/getUsers', (req: Request, res: Response) => {
-    let sqlMysql = `
-        SELECT * FROM users ;
-    `;
-
-    Server.onExecuteQuery(sqlMysql, (err: any, data: Object[]) => {
-      if (err) {
-        return res.status(500).json({
-          ok: false,
-          error: "Error de conexión"
-        });
-      }
-
-      res.json({
-        ok: true,
-        data,
-        message: "usuarios"
+      return res.status(500).json({
+        ok: false,
+        error: "Error de conexión"
       });
+    }
+
+    res.json({
+      ok: true,
+      data,
+      message: "Se registro con éxito"
     });
+  });
+
 });
+
+router.get('/User/Get', (req: Request, res: Response) => {
+  let body = req.body; //JSON.stringify(req.body) ;
+  // let newBody = JSON.parse(body);
+
+  let sqlQuery = `CALL ss_getUser( );`
+
+  MysqlDB.onExecuteQuery(sqlQuery, (err: any, data: Object) => {
+    if (err) {
+
+      return res.status(500).json({
+        ok: false,
+        error: "Error de conexión"
+      });
+    }
+
+    res.json({
+      ok: true,
+      data,
+      message: "Lista de usuarios"
+    });
+  });
+
+});
+
 
 export default router;

@@ -1,25 +1,25 @@
-import server from "./src/classes/server";
-import cors from 'cors';
+import server = require('./src/classes/server');
 import route from './src/routes/route';
-import bodyParser from "body-parser";
+import cors = require('cors') ;
+import bodyParser = require("body-parser") ;
+import express = require('express');
 
-const Server = server.instance;
+const appGlobal = express();
+
+const Server = server.default.instance;
 
 // parse application/x-www-form-urlencoded
-Server.app.use(bodyParser.urlencoded({ extended: false }));
+appGlobal.use(bodyParser.urlencoded({ extended: false }));
  
 // parse application/json
-Server.app.use(bodyParser.json());
+appGlobal.use(bodyParser.json());
 
-Server.app.use( cors( { origin: true, credentials: true } ) );
+appGlobal.use( cors( { origin: true, credentials: true } ) );
 
-Server.app.use(route);
+appGlobal.use(route);
 
-Server.onRun( (error: any) => {
-    if ( error ) {
-        return console.log('error al levantar servidor');
-    }
-    console.log('Corriendo en puerto', Server.port);
-} );
+Server.app.use( appGlobal );
 
-Server.onConnectDB('localhost','root','','panelglobal');
+Server.onRun();
+
+// Server.onConnectDB('localhost','root','','panelglobal');
