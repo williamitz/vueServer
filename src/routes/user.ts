@@ -7,8 +7,7 @@ const router = Router();
 
 
 router.post('/User/Add', (req: Request, res: Response) => {
-  let body = req.body; //JSON.stringify(req.body) ;
-  // let newBody = JSON.parse(body);
+  let body = req.body; 
 
   let sqlQuery = `CALL ss_addUer( "${body.nameUser}", "${body.passwordUser }" );`
 
